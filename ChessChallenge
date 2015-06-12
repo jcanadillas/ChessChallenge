@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -52,10 +53,6 @@ public class ChessChallenge {
      * 
      * @param configuration
      * @return boolean
-     */
-    
-    /**
-     * 
      * @param configuration
      * @return
      */
@@ -76,7 +73,6 @@ public class ChessChallenge {
     	
     	ChessBoard board = stack.peek();
     	int [] newPos = new int []{ChessBoard.INVALID_POS, ChessBoard.INVALID_POS};
-    	String pp = "";
     	
     	//We get a solution!!
     	if(weDontHavePieces(conf)) {
@@ -93,12 +89,50 @@ public class ChessChallenge {
     	// Order pieces by aggressiveness
     	if(conf[CONF_QUEEN_INDEX] > 0) {      		    		    
     		newPos = board.putQueen(rowIndex, colIndex);
-    		conf[CONF_QUEEN_INDEX]--;
+
+    		if(newPos[0] !=  ChessBoard.INVALID_POS) {//if we can put the piece	
+        		conf[CONF_QUEEN_INDEX]--;
+    			stack.push(board);
+    			solve(solutions, conf, stack, newPos[0], newPos[1]);       			    		
+    		}else {
+    			newPos = board.advance(rowIndex, colIndex);							
+    			if(newPos[0] != ChessBoard.INVALID_POS) {    				
+    				solve(solutions, conf, stack, newPos[0], newPos[1]);
+    			}else {
+    				if(weDontHavePieces(conf)) {
+    		    		solutions.add(board);		    		
+    		    	}	
+    				else{
+    					//stack.pop();
+    					//solve(solutions, conf, stack, newPos[0], newPos[1]);
+    				}
+    				return solutions;
+    			}				
+    		}
     	}
     	
     	if(conf[CONF_BISHOP_INDEX] > 0) { 
     		newPos = board.putBishop(rowIndex, colIndex);
-    		conf[CONF_BISHOP_INDEX]--;
+    		
+    		if(newPos[0] !=  ChessBoard.INVALID_POS) {//if we can put the piece	
+        		conf[CONF_BISHOP_INDEX]--;
+    			stack.push(board);
+    			solve(solutions, conf, stack, newPos[0], newPos[1]);       			    		
+    		}else {
+    			newPos = board.advance(rowIndex, colIndex);							
+    			if(newPos[0] != ChessBoard.INVALID_POS) {    				
+    				solve(solutions, conf, stack, newPos[0], newPos[1]);
+    			}else {
+    				if(weDontHavePieces(conf)) {
+    		    		solutions.add(board);		    		
+    		    	}	
+    				else{
+    					//stack.pop();
+    					//solve(solutions, conf, stack, newPos[0], newPos[1]);
+    				}
+    				return solutions;
+    			}				
+    		}
     	}
     	
         if(conf[CONF_ROOKS_INDEX] > 0) {
@@ -116,7 +150,11 @@ public class ChessChallenge {
     			}else {
     				if(weDontHavePieces(conf)) {
     		    		solutions.add(board);		    		
-    		    	}				
+    		    	}	
+    				else{
+    					//stack.pop();
+    					//solve(solutions, conf, stack, newPos[0], newPos[1]);
+    				}
     				return solutions;
     			}				
     		}
@@ -137,7 +175,11 @@ public class ChessChallenge {
     			}else {
     				if(weDontHavePieces(conf)) {
     		    		solutions.add(board);		    		
-    		    	}				
+    		    	}			
+    				else{
+    					//stack.pop();
+    					//solve(solutions, conf, stack, newPos[0], newPos[1]);
+    				}
     				return solutions;
     			}				
     		}
@@ -145,11 +187,28 @@ public class ChessChallenge {
         
         if(conf[CONF_KNIGHT_INDEX] > 0) {
         	newPos = board.putKnight(rowIndex, colIndex);
-        	conf[CONF_KNIGHT_INDEX]--;
+
+        	if(newPos[0] !=  ChessBoard.INVALID_POS) {//if we can put the piece	
+        		conf[CONF_KNIGHT_INDEX]--;
+    			stack.push(board);
+    			solve(solutions, conf, stack, newPos[0], newPos[1]);       			    		
+    		}else {
+    			newPos = board.advance(rowIndex, colIndex);							
+    			if(newPos[0] != ChessBoard.INVALID_POS) {    				
+    				solve(solutions, conf, stack, newPos[0], newPos[1]);
+    			}else {
+    				if(weDontHavePieces(conf)) {
+    		    		solutions.add(board);		    		
+    		    	}			
+    				else{
+    					//stack.pop();
+    					//solve(solutions, conf, stack, newPos[0], newPos[1]);
+    				}
+    				return solutions;
+    			}				
+    		}
     	}
-        
-        
-        
+                       
         return solutions;
     }
     
@@ -173,6 +232,9 @@ public class ChessChallenge {
         }
     }
     
+    /**
+     * Helper function for print the given configuration
+     */
     private void printConfiguration(int [] configuration, int rows, int columns) {
     	if(configuration.length == 5 ) {
     		StringBuilder confString = new StringBuilder("Configuration ");
@@ -188,32 +250,23 @@ public class ChessChallenge {
     
     public static void main(String[] args) {
     	
-//    	Properties properties = Utils.getResourceProps("conf/tableAndPieces.properties", true, ChessChallenge.class);
+    	Properties properties = Utils.getResourceProps("conf/tableAndPieces.properties", true, ChessChallenge.class);
     	    		    
-//        int rows = 0; 
-//        String rowsProp = properties.getProperty("rows");
-//        int columns = 3;
-//        String columnsProp = properties.getProperty("columns");              
-//        int nKings = 2;
-//        String nKingsProp = properties.getProperty("nKings");
+        int rows = Integer.parseInt(properties.getProperty("rows"));         
+        int columns = Integer.parseInt(properties.getProperty("columns"));             
+        int nKings = Integer.parseInt(properties.getProperty("nKings"));        
+        int nQueens = Integer.parseInt(properties.getProperty("nQueens"));        
+        int nBishops = Integer.parseInt(properties.getProperty("nBishops"));         
+        int nKnights = Integer.parseInt(properties.getProperty("nKnights"));            
+       int nRooks = Integer.parseInt(properties.getProperty("nRooks"));        
+//        
+//        int rows = 2;
+//        int columns = 2;                      
+//        int nKings = 1;
 //        int nQueens = 0;
-//        String nQueensProp = properties.getProperty("nQueens");
 //        int nBishops = 0;
-//        String nBishopsProp = properties.getProperty("nBishops");
 //        int nKnights = 0;
-//        String nKnightsProp = properties.getProperty("nKnights");
 //        int nRooks = 1;
-//        String nRooksProp = properties.getProperty("nRooks");
-        
-        
-        
-        int rows = 3;
-        int columns = 3;                      
-        int nKings = 2;
-        int nQueens = 0;
-        int nBishops = 0;
-        int nKnights = 0;
-        int nRooks = 1;
         
         if (rows == columns){
         	 ChessChallenge problem = new ChessChallenge(rows, columns, nKings, nQueens, nBishops, nRooks, nKnights);        	
@@ -221,22 +274,7 @@ public class ChessChallenge {
         }
         else{
         	System.out.println("The dimensions of the board are not square");
-        }
-                              
-       
-       
-       
-       //difficult
-//       int rows = 7;
-//       int columns = 7;
-//       int nKings = 2;
-//       int nQueens = 2;
-//       int nBishops = 2;
-//       int nKnights = 1;
-//       int nRooks = 0;
-//       ChessProblem problem = new ChessProblem(rows, columns, nKings, nQueens, nBishops, nRooks, nKnights);       
-//       problem.solve();
-       
+        }     
     }
 	
 }
